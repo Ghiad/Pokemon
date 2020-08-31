@@ -48,7 +48,7 @@ class Race :public Base {//具体的种族
 public:
 	Race();//具体种族的初始化
 	bool attack(Pokemon &attacker, Pokemon &aim, int skillIndex = 0) const;//具体种族的攻击函数
-	/*Race& operator=(const Race& a) {
+	Race& operator=(const Race& a) {
 		type = a.type;
 		name = a.name; Atk = a.Atk;
 		Def = a.Def;
@@ -64,12 +64,12 @@ public:
 		for (int i = 0; i < 3; i++) {
 			pp[i] = a.pp[i];
 		}
-	}*/
+	}
 };
 
 class Pokemon {//具体的宝可梦
 private:
-	const Base &race;
+	Base &race;
 	int baseatk;//基础数值
 	int basedef;
 	int basehp;
@@ -85,7 +85,7 @@ private:
 	int spe;
 	int pp[3];
 public:
-	Pokemon(const Base &race, const string &name = "");//具体的宝可梦初始化函数	
+	Pokemon(Base &race, const string &name = "");//具体的宝可梦初始化函数	
 	int getbatk() { return baseatk; }//获得基础属性
 	int getbdef() { return basedef; }
 	int getbhp() { return basehp; }
@@ -116,7 +116,7 @@ public:
 	bool attack(Pokemon &target);//攻击函数
 	void recover();//重置战时属性
 
-	/*Pokemon& operator=(const Pokemon& a) {
+	Pokemon& operator=(const Pokemon& a) {
 		race = a.race;
 		baseatk = a.baseatk;
 		basedef = a.basedef;
@@ -133,7 +133,7 @@ public:
 		for (int i = 0; i < 3; i++)
 			pp[i] = a.pp[i];
 		return *this;
-	}*/
+	}
 };
 
 class Battle {

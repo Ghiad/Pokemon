@@ -226,7 +226,7 @@ bool Race<3>::attack(Pokemon &attack, Pokemon &target, int skillindex) const {
 }
 
 
-Pokemon::Pokemon(const Base &pokrace, const string &pokname) :race(pokrace) {
+Pokemon::Pokemon(Base &pokrace, const string &pokname) :race(pokrace) {
 	if (pokname.length() == 0)//如果没有起名字就用种族的名字代替
 		name = race.raceName();
 	else
