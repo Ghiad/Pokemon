@@ -1,5 +1,7 @@
 #include"Pokemon.h"
-
+string output;
+char sendBuf[MAX];
+const char* out;
 Base::Base(Poktype typ) {
 	type = typ;
 
@@ -11,7 +13,7 @@ Base::Base(Poktype typ) {
 	switch (typ) //不同种族开始的属性不同
 	{
 	case ATK:
-		Atk += 3;
+		Atk += 5;
 		break;
 	case DEF:
 		Def += 3;
@@ -27,6 +29,30 @@ Base::Base(Poktype typ) {
 	}
 }
 
+bool Base::dodge(int speed1, int speed2) const {
+	int i = rand() % 10;
+	if (speed1 < speed2) {
+		if (i <= 2)
+			return true;
+	}
+	if (speed1 >= speed2) {
+		if (i == 0 )
+			return true;
+	}
+	return false;
+}
+bool Base::boot(int speed1, int speed2)const {
+	int i = rand() % 10;
+	if (speed1 < speed2) {
+		if (i == 0)
+			return true;
+	}
+	if (speed1 >= speed2) {
+		if (i <= 2)
+			return true;
+	}
+	return false;
+}
 string Base::getskillName(int n) const {
 	if (n >= 0 && n <= 3) {
 		return skillName[n];
@@ -79,22 +105,53 @@ Race<0>::Race() : Base(ATK)//ATK种族的初始化
 }
 template <>
 bool Race<0>::attack(Pokemon &attack, Pokemon &target, int skillindex) const {//高力量型种族的攻击函数
-	cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
-	if (skillindex == 1) {//不同技能造成的效果不同
-		target.changeatk(-target.getatk() / 8);
+	if (dodge(attack.getspe(), target.getspe())) {
+		output += attack.getname() + "的攻击被躲掉了\n";
+		return false;
 	}
-	else if (skillindex == 2) {
-		int damage = (attack.getatk() - target.getdef()) * 1.5;
-		return target.changehp(-damage);
-	}
-	else if (skillindex == 3) {
-		int damage = (attack.getatk() - target.getdef()) * 2;
-		return target.changehp(-damage);
+	bool crits = boot(attack.getspe(), target.getspe());
+	int damage;
+	if (crits) {
+		output += "\n"+attack.getname() + "对" + target.getname() + "使用了" + attack.skillName(skillindex) + ",造成了暴击！！！\n";
+		//cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
+		if (skillindex == 1) {//不同技能造成的效果不同
+			target.changeatk(-target.getatk() / 8);
+		}
+		else if (skillindex == 2) {
+			damage = (attack.getatk() - target.getdef()) * 3;
+			return target.changehp(-damage);
+		}
+		else if (skillindex == 3) {
+			int damage = (attack.getatk() - target.getdef()) * 4;
+			return target.changehp(-damage);
+		}
+		else {
+			int damage = (attack.getatk() - target.getdef())*2;
+			return target.changehp(-damage);
+		}
 	}
 	else {
-		int damage = attack.getatk() - target.getdef();
-		return target.changehp(-damage);
+		output += "\n" + attack.getname() + "对" + target.getname() + "使用了" + attack.skillName(skillindex) + "\n";
+		//cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
+		if (skillindex == 1) {//不同技能造成的效果不同
+			target.changeatk(-target.getatk() / 8);
+		}
+		else if (skillindex == 2) {
+			damage = (attack.getatk() - target.getdef()) * 1.5;
+			return target.changehp(-damage);
+		}
+		else if (skillindex == 3) {
+			int damage = (attack.getatk() - target.getdef()) * 2;
+			return target.changehp(-damage);
+		}
+		else {
+			int damage = attack.getatk() - target.getdef();
+			return target.changehp(-damage);
+		}
 	}
+	
+
+	
 	return false;
 }
 
@@ -121,22 +178,51 @@ Race<1>::Race() : Base(HP)
 }
 template <>
 bool Race<1>::attack(Pokemon &attack, Pokemon &target, int skillindex) const {//高生命型种族的攻击函数
-	cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
-	if (skillindex == 1) {
-		target.changeatk(-target.getatk() / 8);
+	if (dodge(attack.getspe(), target.getspe())) {
+		output += attack.getname() + "的攻击被躲掉了\n";
+		return false;
 	}
-	else if (skillindex == 2) {
-		int damage = (attack.getatk() - target.getdef()) * 2;
-		return target.changehp(-damage);
-	}
-	else if (skillindex == 3) {
-		int damage = (attack.getatk() - target.getdef()) * 1.5;
-		return target.changehp(-damage);
+	bool crits = boot(attack.getspe(), target.getspe());
+	int damage;
+	if (crits) {
+		output += "\n" + attack.getname() + "对" + target.getname() + "使用了" + attack.skillName(skillindex) + ",造成了暴击！！！\n";
+		//cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
+		if (skillindex == 1) {
+			target.changeatk(-target.getatk() / 8);
+		}
+		else if (skillindex == 2) {
+			damage = (attack.getatk() - target.getdef()) * 4;
+			return target.changehp(-damage);
+		}
+		else if (skillindex == 3) {
+			damage = (attack.getatk() - target.getdef()) * 3;
+			return target.changehp(-damage);
+		}
+		else {
+			damage = (attack.getatk() - target.getdef())*2;
+			return target.changehp(-damage);
+		}
 	}
 	else {
-		int damage = attack.getatk() - target.getdef();
-		return target.changehp(-damage);
+		output += "\n" + attack.getname() + "对" + target.getname() + "使用了" + attack.skillName(skillindex) + "\n";
+		//cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
+		if (skillindex == 1) {
+			target.changeatk(-target.getatk() / 8);
+		}
+		else if (skillindex == 2) {
+			damage = (attack.getatk() - target.getdef()) * 2;
+			return target.changehp(-damage);
+		}
+		else if (skillindex == 3) {
+			damage = (attack.getatk() - target.getdef()) * 1.5;
+			return target.changehp(-damage);
+		}
+		else {
+			damage = attack.getatk() - target.getdef();
+			return target.changehp(-damage);
+		}
 	}
+	
 	return false;
 }
 
@@ -164,21 +250,51 @@ Race<2>::Race() : Base(DEF)
 
 template <>
 bool Race<2>::attack(Pokemon &attack, Pokemon &target, int skillindex) const {
-	cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
-	if (skillindex == 1) {
-		target.changedef(-target.getdef() / 8);
+	if (dodge(attack.getspe(), target.getspe())) {
+		output += attack.getname() + "的攻击被躲掉了\n";
+		return false;
 	}
-	else if (skillindex == 2) {
-		int damage = (attack.getatk() - target.getdef()) * 2;
-		return target.changehp(-damage);
-	}
-	else if (skillindex == 3) {
-		int damage = (attack.getatk() - target.getdef()) * 1.5;
-		return target.changehp(-damage);
+	bool crits = boot(attack.getspe(), target.getspe());
+	int damage;
+	if (crits) {
+		output += "\n" + attack.getname() + "对" + target.getname() + "使用了" + attack.skillName(skillindex) + "造成了暴击!!!\n";
+
+		//cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
+		if (skillindex == 1) {
+			target.changedef(-target.getdef() / 4);
+		}
+		else if (skillindex == 2) {
+			int damage = (attack.getatk() - target.getdef()) * 4;
+			return target.changehp(-damage);
+		}
+		else if (skillindex == 3) {
+			int damage = (attack.getatk() - target.getdef()) * 3;
+			return target.changehp(-damage);
+		}
+		else {
+			int damage = (attack.getatk() - target.getdef()) * 2;
+			return target.changehp(-damage);
+		}
 	}
 	else {
-		int damage = attack.getatk() - target.getdef();
-		return target.changehp(-damage);
+		output += "\n" + attack.getname() + "对" + target.getname() + "使用了" + attack.skillName(skillindex) + "\n";
+
+		//cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
+		if (skillindex == 1) {
+			target.changedef(-target.getdef() / 8);
+		}
+		else if (skillindex == 2) {
+			int damage = (attack.getatk() - target.getdef()) * 2;
+			return target.changehp(-damage);
+		}
+		else if (skillindex == 3) {
+			int damage = (attack.getatk() - target.getdef()) * 1.5;
+			return target.changehp(-damage);
+		}
+		else {
+			int damage = attack.getatk() - target.getdef();
+			return target.changehp(-damage);
+		}
 	}
 	return false;
 }
@@ -206,22 +322,53 @@ Race<3>::Race() : Base(SPE)
 }
 template <>
 bool Race<3>::attack(Pokemon &attack, Pokemon &target, int skillindex) const {
-	cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
-	if (skillindex == 1) {
-		attack.changeatk(attack.getatk() / 8);
+	if (dodge(attack.getspe(), target.getspe())) {
+		output += attack.getname() + "的攻击被躲掉了\n";
+		return false;
 	}
-	else if (skillindex == 2) {
-		int damage = (attack.getatk() - target.getdef()) * 2;
-		return target.changehp(-damage);
-	}
-	else if (skillindex == 3) {
-		int damage = (attack.getatk() - target.getdef()) * 1.5;
-		return target.changehp(-damage);
+	bool crits = boot(attack.getspe(), target.getspe());
+	int damage;
+	if (crits) {
+		output += "\n" + attack.getname() + "对" + target.getname() + "使用了" + attack.skillName(skillindex) + "造成了暴击！！！\n";
+
+		//cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
+		if (skillindex == 1) {
+			attack.changeatk(attack.getatk() / 8);
+		}
+		else if (skillindex == 2) {
+			int damage = (attack.getatk() - target.getdef()) * 4;
+			return target.changehp(-damage);
+		}
+		else if (skillindex == 3) {
+			int damage = (attack.getatk() - target.getdef()) * 3;
+			return target.changehp(-damage);
+		}
+		else {
+			int damage = (attack.getatk() - target.getdef())*2;
+			return target.changehp(-damage);
+		}
 	}
 	else {
-		int damage = attack.getatk() - target.getdef();
-		return target.changehp(-damage);
+		output += "\n" + attack.getname() + "对" + target.getname() + "使用了" + attack.skillName(skillindex) + "\n";
+
+		//cout << attack.getname() << "对" << target.getname() << "使用了" << attack.skillName(skillindex) << endl;
+		if (skillindex == 1) {
+			attack.changeatk(attack.getatk() / 8);
+		}
+		else if (skillindex == 2) {
+			int damage = (attack.getatk() - target.getdef()) * 2;
+			return target.changehp(-damage);
+		}
+		else if (skillindex == 3) {
+			int damage = (attack.getatk() - target.getdef()) * 1.5;
+			return target.changehp(-damage);
+		}
+		else {
+			int damage = attack.getatk() - target.getdef();
+			return target.changehp(-damage);
+		}
 	}
+	
 	return false;
 }
 
@@ -275,47 +422,62 @@ void Pokemon::changeatk(int n) {
 	if (atk < 1)
 		atk = 1;
 	if (n > 0)
-		cout << name << "的攻击+" << n << endl;
+		output += name + "的攻击+" + to_string(n) + "\n";
+		//cout << name << "的攻击+" << n << endl;
 	else
-		cout << name << "的攻击" << n << endl;
-	cout << name << "现在的攻击力是" << atk << endl;
+		output += name + "的攻击" + to_string(n) + "\n";
+		//cout << name << "的攻击" << n << endl;
+	output += name + "现在的攻击力是" + to_string(atk) + "\n";
+	
 }
 
 void Pokemon::changedef(int n) {
 	def += n;
 	if (def < 1)
 		def = 1;
-	if (n > 0)
-		cout << name << "的防御力+" << n << endl;
+	if (n >= 0)
+		output += name + "的防御力+" + to_string(n) + "\n";
+		//cout << name << "的防御力+" << n << endl;
 	else
-		cout << name << "的防御力" << n << endl;
-	cout << name << "现在的防御力是" << def << endl;
+		output += name + "的防御力" + to_string(n) + "\n";
+		//cout << name << "的防御力" << n << endl;
+	output += name + "现在的防御力是" + to_string(def) + "\n";
+	//cout << name << "现在的防御力是" << def << endl;
+	
 }
 
-bool Pokemon::changehp(int n) {//改变生命值，如果生命值为0返回true
+bool Pokemon::changehp(int n) {//改变生命值，如果生命值为0返回true	
 	hp += n;
 	if (hp < 0)
 		hp = 0;
-	cout << name << "承受了" << n << "的伤害" << endl;
+	output += name + "承受了" + to_string(n) + "的伤害\n";
+	//cout << name << "承受了" << n << "的伤害" << endl;
 	if (hp == 0) {
-		cout << name << "倒下了" << endl;
+		output += name + "倒下了\n";
+		//cout << name << "倒下了" << endl;
+		
 		return true;
 	}
 	else {
-		cout << name << "现在的生命值是" << hp << endl;
+		output += name + "现在的生命值是" + to_string(hp) + "\n";
+		//cout << name << "现在的生命值是" << hp << endl;
 		return false;
 	}
+	
 }
 
-void Pokemon::changespe(int n) {
+void Pokemon::changespe(int n) {	
 	spe += n;
 	if (spe < 1)
 		spe = 1;
 	if (n > 0)
-		cout << name << "的敏捷+" << n << endl;
+		output += name + "的敏捷+" + to_string(n) + "\n";
+		//cout << name << "的敏捷+" << n << endl;
 	else
-		cout << name << "的敏捷" << n << endl;
-	cout << name << "现在的敏捷是" << spe << endl;
+		output += name + "的敏捷" + to_string(n) + "\n";
+		//cout << name << "的敏捷" << n << endl;
+	output += name + "现在的敏捷是" + to_string(spe) + "\n";
+	//cout << name << "现在的敏捷是" << spe << endl;
 }
 
 bool Pokemon::attack(Pokemon &target) {
@@ -331,13 +493,17 @@ bool Pokemon::attack(Pokemon &target) {
 }
 
 bool Pokemon::gainexp(int n) {
+	string infor;
+	const char* information;
+	char sen[MAX];
+
 	if (level == 15)//如果满级，返回
 		return false;
 	
 	exp += n;
 	bool up = false;//用来侦测是否升级
-	cout << name << "获得了" << n << "点经验" << endl;
-	while (exp >= race.getexpneed(level + 1)) {//升级操作
+	infor += name + "获得了" + to_string(n) + "点经验,"+to_string(exp)+"/"+to_string(race.getexpneed(level + 1))+"\n";
+	while (exp >= race.getexpneed(level + 1) && level != 15) {//升级操作
 		exp -= race.getexpneed(level + 1);//减去升级所要的经验
 		up = true;
 		level++;
@@ -350,28 +516,63 @@ bool Pokemon::gainexp(int n) {
 		if (A == ATK)//不同种类升级所加属性不同
 			gatk += 4;
 		else if (A == DEF)
-			gdef += 3;
+			gdef += 2;
 		else if (A == HP)
 			ghp += 6;
 		else
-			gspe += 3;
+			gspe += 2;
 		baseatk += gatk;
 		basedef += gdef;
 		basespe += gspe;
-		basehp += hp;
-		cout << name << "升级了," << "现在" << level << "级" << endl;
-		cout << "ATK " << baseatk - gatk << "-->" << baseatk << endl;
-		cout << "DEF " << basedef - gdef << "-->" << basedef << endl;
-		cout << "SPE " << basespe - gspe << "-->" << basespe << endl;
-		cout << "HP " << basehp - ghp << "-->" << basehp << endl;
-
+		basehp += ghp;
+		infor += name + "升级了,现在" + to_string(level) + "级\n";
+		infor += "ATK" + to_string(baseatk - gatk) + "-->" + to_string(baseatk) + "\n";
+		infor += "DEF" + to_string(basedef - gdef) + "-->" + to_string(basedef) + "\n";
+		infor += "SPE" + to_string(basespe - gspe) + "-->" + to_string(basespe) + "\n";
+		infor += "HP" + to_string(basehp - ghp) + "-->" + to_string(basehp) + "\n";		
 	}
+	information = &infor[0];
+	sprintf_s(sen, information);
+	send(connSocket, sen, strlen(sen) + 1, 0);
 	if (up == true)//升级了返回true
 		return true;
 	else
 		return false;
 }
 
+bool Pokemon::gainexpfs(int n) {
+	if (level == 15)//如果满级，返回
+		return false;
+	exp += n;
+	bool up = false;//用来侦测是否升级
+	while (exp >= race.getexpneed(level + 1) && level != 15) {//升级操作
+		exp -= race.getexpneed(level + 1);//减去升级所要的经验
+		up = true;
+		level++;
+		int gatk, gdef, ghp, gspe;
+		gatk = 5;
+		gdef = 2;
+		ghp = 10;
+		gspe = 5;
+		Poktype A = race.gettype();
+		if (A == ATK)//不同种类升级所加属性不同
+			gatk += 4;
+		else if (A == DEF)
+			gdef += 2;
+		else if (A == HP)
+			ghp += 6;
+		else
+			gspe += 2;
+		baseatk += gatk;
+		basedef += gdef;
+		basespe += gspe;
+		basehp += ghp;
+	}
+	if (up == true)//升级了返回true
+		return true;
+	else
+		return false;
+}
 void Pokemon::recover() {//宝可梦恢复函数
 	atk = baseatk;
 	def = basedef;
@@ -417,12 +618,22 @@ bool Battle::start() {
 			timerB = 0;
 		}
 	}
+	memset(sendBuf, 0, MAX);
 	if (pokA.gethp() == 0) {
+		output += pokB.getname() + "赢了\n";
 		//cout << pokB.getname() << "赢了" << endl;
+		const char* out = &output[0];		
+		sprintf_s(sendBuf, out);
+		send(connSocket, sendBuf, strlen(sendBuf) + 1, 0);
 		return 0;
 	}
 	else {
+		output += pokA.getname() + "赢了\n";
+		const char* out = &output[0];
+		sprintf_s(sendBuf, out);
+		send(connSocket, sendBuf, strlen(sendBuf) + 1, 0);
 		//cout << pokA.getname() << "赢了" << endl;
 		return 1;
 	}
+	output.clear();
 }

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include<stdio.h>
 #include<string>
+#include"net.h"
+#define MAX 2000
 using namespace std;
 
 class Pokemon;
@@ -40,7 +42,8 @@ public:
 	int getpp(int n) const;
 	int getexpneed(int level) const;//返回升级需要的经验
 	virtual bool attack(Pokemon &attacker, Pokemon &target, int skillindex = 0) const = 0;//攻击函数，纯虚函数
-
+	bool dodge(int, int)const;
+	bool boot(int, int)const;
 };
 
 template <int T>
@@ -64,6 +67,7 @@ public:
 		for (int i = 0; i < 3; i++) {
 			pp[i] = a.pp[i];
 		}
+		return *this;
 	}
 };
 
@@ -113,6 +117,7 @@ public:
 	void changeatk(int n);
 
 	bool gainexp(int n);//获得经验并且升级函数
+	bool gainexpfs(int n);//获得经验并且升级函数,用在服务器端初始化
 	bool attack(Pokemon &target);//攻击函数
 	void recover();//重置战时属性
 

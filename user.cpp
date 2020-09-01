@@ -58,31 +58,27 @@ void User::getrandpok() {
 }
 void User::readonepok(int id,string race, string name, int level, int exp) {
 	int hmexptlev[15] = { 0,5,15,35,70,125,205,315,460,645,875,1155,1490,1885,2345 };
-	Race<0> Charmander;
-	Race<1> Bulbasaur;
-	Race<2> Squirtle;
-	Race<3> Pikachu;
 	if (race == "小火龙") {
-		Pokemon A(Charmander);
-		A.gainexp(hmexptlev[level - 1] + exp);
+		Pokemon A(Charmander,name);
+		A.gainexpfs(hmexptlev[level - 1] + exp);
 		A.changeid(id);
 		pok.push_back(A);
 	}
 	else if (race == "妙蛙花") {
-		Pokemon A(Bulbasaur);
-		A.gainexp(hmexptlev[level - 1] + exp);
+		Pokemon A(Bulbasaur,name);
+		A.gainexpfs(hmexptlev[level - 1] + exp);
 		A.changeid(id);
 		pok.push_back(A);
 	}
 	else if (race == "杰尼龟") {
-		Pokemon A(Squirtle);
-		A.gainexp(hmexptlev[level - 1] + exp);
+		Pokemon A(Squirtle,name);
+		A.gainexpfs(hmexptlev[level - 1] + exp);
 		A.changeid(id);
 		pok.push_back(A);
 	}
 	else {
-		Pokemon A(Pikachu);
-		A.gainexp(hmexptlev[level - 1] + exp);
+		Pokemon A(Pikachu,name);
+		A.gainexpfs(hmexptlev[level - 1] + exp);
 		A.changeid(id);
 		pok.push_back(A);
 	}
@@ -90,10 +86,8 @@ void User::readonepok(int id,string race, string name, int level, int exp) {
 User::User(string user_name) :name(user_name){
 	win = 0;
 	los = 0;
-	for (int j = 0; j < 3; j++) {		
-		getrandpok();
-		//string Sentence = "INSERT INTO consumer(owner,race,name,level,exp,win,los,numbadge,quabadge) VALUES('" + name + "','" + pok.back().getracename() + "','" + pok.back().getname() + "'," + to_string(pok.back().getlev()) + ", " + to_string(pok.back().getexp()) +", "+ to_string(0)+", "+ to_string(0)+", "+"‘无’，‘无’);";        //SQL语句		
-	}		
+	numbadge = "无";
+	quabadge = "无";			
 }
 
 void User::changebadge() {
@@ -101,7 +95,7 @@ void User::changebadge() {
 		numbadge = "铜";
 	else if (pok.size() > 10)
 		numbadge = "银";
-	else
+	else if (pok.size() > 15)
 		numbadge = "金";
 	auto begin = pok.begin(), end = pok.end();
 	int num = 0;
@@ -114,6 +108,6 @@ void User::changebadge() {
 		quabadge = "铜";
 	else if (num > 10)
 		quabadge = "银";
-	else
+	else if (num > 15)
 		quabadge = "金";
 }
