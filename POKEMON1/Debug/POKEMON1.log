@@ -1,0 +1,8 @@
+﻿  POKEMON1.cpp
+  Pokemon.cpp
+f:\visualstdioc\pokemon1\pokemon1\pokemon.cpp(87): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+f:\visualstdioc\pokemon1\pokemon1\pokemon.cpp(133): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+f:\visualstdioc\pokemon1\pokemon1\pokemon.cpp(176): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+f:\visualstdioc\pokemon1\pokemon1\pokemon.cpp(218): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+  正在生成代码...
+  POKEMON1.vcxproj -> F:\Visualstdioc\POKEMON1\Debug\POKEMON1.exe
